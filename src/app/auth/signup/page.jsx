@@ -1,5 +1,5 @@
 'use client'
-import * as React from 'react'
+import React from 'react'
 import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -13,7 +13,6 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import Copyright from '@/components/Copyright'
-
 
 export default function SignUp() {
     const handleSubmit = (event) => {
@@ -41,7 +40,12 @@ export default function SignUp() {
                 <Typography component="h1" variant="h5">
                     Sign up
                 </Typography>
-                <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                <Box
+                    component="form"
+                    noValidate
+                    onSubmit={handleSubmit}
+                    sx={{ mt: 3 }}
+                >
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
@@ -87,7 +91,12 @@ export default function SignUp() {
                         </Grid>
                         <Grid item xs={12}>
                             <FormControlLabel
-                                control={<Checkbox value="allowExtraEmails" color="primary" />}
+                                control={
+                                    <Checkbox
+                                        value="allowExtraEmails"
+                                        color="primary"
+                                    />
+                                }
                                 label="I want to receive inspiration, marketing promotions and updates via email."
                             />
                         </Grid>

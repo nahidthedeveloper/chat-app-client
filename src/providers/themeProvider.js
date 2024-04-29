@@ -9,6 +9,7 @@ import Navbar from '@/components/Navbar'
 const lightTheme = createTheme({
     palette: {
         mode: 'light',
+
     },
 })
 

@@ -1,0 +1,7 @@
+.conversation {
+  border-bottom: 1px solid #3c3d4140;
+  &:hover {
+    background: #3c3d41;
+    transition: all 0.3s ease-in-out;
+  }
+}

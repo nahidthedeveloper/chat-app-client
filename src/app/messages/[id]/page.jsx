@@ -9,7 +9,7 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import CallIcon from '@mui/icons-material/Call'
 import VideocamIcon from '@mui/icons-material/Videocam'
 import packageJson from '../../../../package.json'
-import Users from '@/components/Users'
+import Conversation from '@/components/Conversation/Conversation'
 import Receiver from '@/components/message/Receiver'
 import Sender from '@/components/message/Sender'
 import TextField from '@mui/material/TextField'
@@ -22,13 +22,13 @@ export default function MessageChild() {
                 mt: '10px',
                 bgcolor: 'chatBody.main',
                 borderRadius: '20px',
-                padding: '10px',
+                // padding: '10px',
             }}
         >
             <Grid container height="88vh">
-                <Grid item xs={12} md={4}>
+                <Grid item xs={12} md={3}>
                     <Box sx={{ height: '100%' }}>
-                        <Box sx={{ px: '30px', py: '15px', flexGrow: 1 }}>
+                        <Box sx={{ px: 2, py: 2, mb: 1 }}>
                             <Box
                                 sx={{
                                     display: 'flex',
@@ -50,20 +50,21 @@ export default function MessageChild() {
                             </Box>
                         </Box>
                         <Box sx={{
-                            px: '30px',
-                            mb: '5px',
+                            px: 2,
+                            mb: 2
                         }}>
                             <TextField
                                 fullWidth
                                 placeholder="Find people here.."
+                                size="small"
+                                sx={{
+                                    '& .MuiInputBase-root': { height: 46, fontSize: '14px', width: '100%' },
+                                }}
                             />
                         </Box>
                         <Box
                             sx={{
-                                px: '30px',
-                                py: '20px',
-                                display: 'grid',
-                                gap: '16px',
+
                                 maxHeight: '63.5vh',
                                 height: '100%',
                                 overflowY: 'scroll',
@@ -78,24 +79,24 @@ export default function MessageChild() {
                                 },
                             }}
                         >
-                            <Users />
-                            <Users />
-                            <Users />
-                            <Users />
-                            <Users />
-                            <Users />
-                            <Users />
-                            <Users />
-                            <Users />
-                            <Users />
-                            <Users />
-                            <Users />
-                            <Users />
-                            <Users />
-                            <Users />
-                            <Users />
-                            <Users />
-                            <Users />
+                            <Conversation />
+                            <Conversation />
+                            <Conversation />
+                            <Conversation />
+                            <Conversation />
+                            <Conversation />
+                            <Conversation />
+                            <Conversation />
+                            <Conversation />
+                            <Conversation />
+                            <Conversation />
+                            <Conversation />
+                            <Conversation />
+                            <Conversation />
+                            <Conversation />
+                            <Conversation />
+                            <Conversation />
+                            <Conversation />
                         </Box>
                         <Divider variant="middle" />
                         <Box
@@ -107,13 +108,13 @@ export default function MessageChild() {
                                 alignItems: 'center',
                             }}
                         >
-                            <Users />
+                            <Conversation />
                             <SettingsIcon />
                         </Box>
                     </Box>
                 </Grid>
 
-                <Grid item xs={12} md={8}>
+                <Grid item xs={12} md={9}>
                     <Box
                         sx={{
                             bgcolor: 'chatBody.light',
@@ -134,7 +135,7 @@ export default function MessageChild() {
                                 alignItems: 'center',
                             }}
                         >
-                            <Users />
+                            <Conversation />
                             <Box
                                 sx={{
                                     display: 'flex',
@@ -182,7 +183,7 @@ export default function MessageChild() {
                             <Sender />
                         </Box>
 
-                        <Divider variant="middle"  />
+                        <Divider variant="middle" />
 
                         <Box
                             sx={{ px: '30px', width: '100%' }}

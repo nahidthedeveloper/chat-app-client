@@ -7,6 +7,9 @@ import { useTheme } from 'next-themes'
 import Navbar from '@/components/Navbar'
 
 const lightTheme = createTheme({
+    typography: {
+        "fontFamily": `"Inter", sans-serif`,
+    },
     palette: {
         mode: 'light',
         chatBody: {
@@ -20,6 +23,9 @@ const lightTheme = createTheme({
 })
 
 const darkTheme = createTheme({
+    typography: {
+        "fontFamily": `"Inter", sans-serif`,
+    },
     palette: {
         mode: 'dark',
         chatBody: {

@@ -1,27 +1,66 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
-import CssBaseline from '@mui/material/CssBaseline'
 import TextField from '@mui/material/TextField'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
-import Link from '@mui/material/Link'
 import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import Copyright from '@/components/Copyright'
+import Link from 'next/link'
+import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { signupSchema } from '@/components/validators'
+import { httpClient } from '@/utils/api'
+import { toast } from 'react-toastify'
+import { objectToArray } from '@/utils'
 
 export default function SignUp() {
-    const handleSubmit = (event) => {
-        event.preventDefault()
-        const data = new FormData(event.currentTarget)
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        })
+    const [agree, setAgree] = useState(false)
+    const [loader, setLoader] = useState(false)
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset,
+        setError
+    } = useForm({
+        mode: 'onTouched',
+        resolver: yupResolver(signupSchema),
+    })
+
+    const submitForm = (data) => {
+        setLoader(true)
+        httpClient
+            .post(`/auth/signup/`, { ...data })
+            .then((response) => {
+                toast.success(response.data.message)
+                setLoader(false)
+                reset()
+            })
+            .catch((err) => {
+                const { data } = err.response
+                if (data) {
+                    const { data: errors } = err.response
+                    if (errors) {
+                        if ('non_field_errors' in errors) {
+                            toast.error(errors.non_field_errors[0])
+                        }
+                    }
+                    const formattedData = objectToArray(data)
+                    formattedData.map((el) => {
+                        setError(el.name, {
+                            type: 'custom',
+                            message: el.message[0],
+                        })
+                    })
+                }
+                setLoader(false)
+            })
     }
 
     return (
@@ -43,30 +82,38 @@ export default function SignUp() {
                 <Box
                     component="form"
                     noValidate
-                    onSubmit={handleSubmit}
+                    onSubmit={handleSubmit(submitForm)}
                     sx={{ mt: 3 }}
                 >
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 autoComplete="given-name"
-                                name="firstName"
                                 required
                                 fullWidth
                                 id="firstName"
                                 label="First Name"
                                 autoFocus
+                                error={!!errors.firstName}
+                                {...register('firstName')}
                             />
+                            <Typography variant="body2" color="red" mx="4px">
+                                {errors.firstName?.message}
+                            </Typography>
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
                                 fullWidth
-                                id="lastName"
                                 label="Last Name"
                                 name="lastName"
                                 autoComplete="family-name"
+                                error={!!errors.lastName}
+                                {...register('lastName')}
                             />
+                            <Typography variant="body2" color="red" mx="4px">
+                                {errors.lastName?.message}
+                            </Typography>
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
@@ -74,20 +121,43 @@ export default function SignUp() {
                                 fullWidth
                                 id="email"
                                 label="Email Address"
-                                name="email"
                                 autoComplete="email"
+                                error={!!errors.email}
+                                {...register('email')}
                             />
+                            <Typography variant="body2" color="red" mx="4px">
+                                {errors.email?.message}
+                            </Typography>
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
                                 required
                                 fullWidth
-                                name="password"
                                 label="Password"
                                 type="password"
                                 id="password"
                                 autoComplete="new-password"
+                                error={!!errors.password}
+                                {...register('password')}
                             />
+                            <Typography variant="body2" color="red" mx="4px">
+                                {errors.password?.message}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                required
+                                fullWidth
+                                label="Confirm Password"
+                                type="password"
+                                id="password"
+                                autoComplete="new-password"
+                                error={!!errors.password}
+                                {...register('confirm_password')}
+                            />
+                            <Typography variant="body2" color="red" mx="4px">
+                                {errors.confirm_password?.message}
+                            </Typography>
                         </Grid>
                         <Grid item xs={12}>
                             <FormControlLabel
@@ -95,9 +165,10 @@ export default function SignUp() {
                                     <Checkbox
                                         value="allowExtraEmails"
                                         color="primary"
+                                        onChange={() => setAgree(!agree)}
                                     />
                                 }
-                                label="I want to receive inspiration, marketing promotions and updates via email."
+                                label="Agree to Terms and Conditions"
                             />
                         </Grid>
                     </Grid>
@@ -106,13 +177,16 @@ export default function SignUp() {
                         fullWidth
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
+                        disabled={!agree}
                     >
                         Sign Up
                     </Button>
                     <Grid container justifyContent="flex-end">
                         <Grid item>
-                            <Link href="#" variant="body2">
-                                Already have an account? Sign in
+                            <Link href={'/auth/login'}>
+                                <Typography variant="body2">
+                                    Already have an account? Sign in
+                                </Typography>
                             </Link>
                         </Grid>
                     </Grid>

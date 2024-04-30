@@ -31,12 +31,12 @@ const Navbar = ({ toggleThemeMode, darkMode }) => {
                     toggleThemeMode={toggleThemeMode}
                 />
                 <Box sx={{ display: 'flex', gap: 3, pl: 3 }}>
-                    <Link href="/auth/login">
+                    <Link href={'/auth/login'}>
                         <Button variant="contained" color="inherit">
                             Login
                         </Button>
                     </Link>
-                    <Link href="/auth/signup">
+                    <Link href={'/auth/signup'}>
                         <Button variant="contained" color="inherit">
                             Signup
                         </Button>

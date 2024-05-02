@@ -2,8 +2,16 @@ import * as yup from 'yup'
 
 export const signupSchema = yup
     .object({
-        firstName: yup.string().required('First name is required'),
-        lastName: yup.string().required('Last name is required'),
+        first_name: yup
+            .string()
+            .required('First name is required')
+            .matches(/^[A-Za-z]*$/, 'Please enter valid name')
+            .max(40),
+        last_name: yup
+            .string()
+            .required('Last name is required')
+            .matches(/^[A-Za-z]*$/, 'Please enter valid name')
+            .max(40),
         email: yup
             .string()
             .required('Email is required.')

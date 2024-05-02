@@ -14,11 +14,16 @@ const lightTheme = createTheme({
         mode: 'light',
         chatBody: {
             main: '#dfe4e6',
-            light: '#ffffff',
+            light: '#faeded',
         },
         chat: {
             sender: '#8ac0f4',
         },
+        button: 'black',
+        conversation: {
+            border: 'rgb(212,215,225)',
+            hover: '#f3f3f8',
+        }
     },
 })
 
@@ -35,6 +40,11 @@ const darkTheme = createTheme({
         chat: {
             sender: '#095eb1',
         },
+        button: 'white',
+        conversation: {
+            border: '#3c3d4140',
+            hover: '#3c3d41',
+        }
     },
 })
 

@@ -21,7 +21,7 @@ export default function SignIn() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const callbackUrl = searchParams.get('callbackUrl')
-    
+
     const {
         register,
         handleSubmit,
@@ -52,7 +52,7 @@ export default function SignIn() {
                 }
             } else {
                 toast.success('Login Successful')
-                router.push(callbackUrl ? callbackUrl : '/profile')
+                router.push(callbackUrl ? callbackUrl : '/messages')
             }
         })
     }

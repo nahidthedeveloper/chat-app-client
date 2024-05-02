@@ -6,13 +6,13 @@ import { Divider, Typography } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import ChatIcon from '@mui/icons-material/Chat'
 import SettingsIcon from '@mui/icons-material/Settings'
-import CallIcon from '@mui/icons-material/Call'
-import VideocamIcon from '@mui/icons-material/Videocam'
-import packageJson from '../../../../package.json'
+import packageJson from '../../../package.json'
 import Conversation from '@/components/Conversation/Conversation'
 import Receiver from '@/components/message/Receiver'
 import Sender from '@/components/message/Sender'
 import TextField from '@mui/material/TextField'
+import User from '@/components/User'
+import DeleteMessage from '@/components/message/DeleteMessage'
 
 export default function MessageChild() {
     return (
@@ -22,7 +22,6 @@ export default function MessageChild() {
                 mt: '10px',
                 bgcolor: 'chatBody.main',
                 borderRadius: '20px',
-                // padding: '10px',
             }}
         >
             <Grid container height="88vh">
@@ -51,7 +50,7 @@ export default function MessageChild() {
                         </Box>
                         <Box sx={{
                             px: 2,
-                            mb: 2
+                            mb: 2,
                         }}>
                             <TextField
                                 fullWidth
@@ -101,14 +100,14 @@ export default function MessageChild() {
                         <Divider variant="middle" />
                         <Box
                             sx={{
-                                px: '30px',
-                                mt: '30px',
+                                px: '16px',
+                                mt: '20px',
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
                             }}
                         >
-                            <Conversation />
+                            <User />
                             <SettingsIcon />
                         </Box>
                     </Box>
@@ -129,26 +128,14 @@ export default function MessageChild() {
                         <Box
                             sx={{
                                 px: '30px',
-                                py: '15px',
+                                py: '19px',
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
                             }}
                         >
-                            <Conversation />
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    gap: '20px',
-                                    alignItems: 'center',
-                                }}
-                            >
-                                <CallIcon fontSize="medium" cursor="pointer" />
-                                <VideocamIcon
-                                    fontSize="large"
-                                    cursor="pointer"
-                                />
-                            </Box>
+                            <User />
+                            <DeleteMessage />
                         </Box>
                         <Divider variant="middle" />
 

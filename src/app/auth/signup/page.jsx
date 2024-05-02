@@ -18,6 +18,7 @@ import { signupSchema } from '@/components/validators'
 import { httpClient } from '@/utils/api'
 import { toast } from 'react-toastify'
 import { objectToArray } from '@/utils'
+import { CircularProgress } from '@mui/material'
 
 export default function SignUp() {
     const [agree, setAgree] = useState(false)
@@ -27,7 +28,7 @@ export default function SignUp() {
         handleSubmit,
         formState: { errors },
         reset,
-        setError
+        setError,
     } = useForm({
         mode: 'onTouched',
         resolver: yupResolver(signupSchema),
@@ -94,11 +95,11 @@ export default function SignUp() {
                                 id="firstName"
                                 label="First Name"
                                 autoFocus
-                                error={!!errors.firstName}
-                                {...register('firstName')}
+                                error={!!errors.first_name}
+                                {...register('first_name')}
                             />
                             <Typography variant="body2" color="red" mx="4px">
-                                {errors.firstName?.message}
+                                {errors.first_name?.message}
                             </Typography>
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -107,12 +108,13 @@ export default function SignUp() {
                                 fullWidth
                                 label="Last Name"
                                 name="lastName"
+                                id='lastName'
                                 autoComplete="family-name"
-                                error={!!errors.lastName}
-                                {...register('lastName')}
+                                error={!!errors.last_name}
+                                {...register('last_name')}
                             />
                             <Typography variant="body2" color="red" mx="4px">
-                                {errors.lastName?.message}
+                                {errors.last_name?.message}
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
@@ -150,7 +152,7 @@ export default function SignUp() {
                                 fullWidth
                                 label="Confirm Password"
                                 type="password"
-                                id="password"
+                                id="cpassword"
                                 autoComplete="new-password"
                                 error={!!errors.password}
                                 {...register('confirm_password')}
@@ -179,7 +181,7 @@ export default function SignUp() {
                         sx={{ mt: 3, mb: 2 }}
                         disabled={!agree}
                     >
-                        Sign Up
+                        {loader ? <CircularProgress sx={{color: 'green'}} size={30} /> : 'Sign Up'}
                     </Button>
                     <Grid container justifyContent="flex-end">
                         <Grid item>

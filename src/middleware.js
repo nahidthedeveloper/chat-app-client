@@ -6,15 +6,13 @@ export function middleware(request) {
 
     const loginUserCanNotAccess = [
         '/auth/login',
-        '/auth/signup',
-        '/auth/reset_password',
-        '/auth/forgot_password',
+        '/auth/signup'
     ]
-    const UnAuthorizeUserCanNotAccess = ['/profile']
+    const UnAuthorizeUserCanNotAccess = ['/messages']
 
     if (authenticate) {
         if (loginUserCanNotAccess.includes(nextUrl.pathname)) {
-            return NextResponse.redirect(new URL('/profile', url))
+            return NextResponse.redirect(new URL('/messages', url))
         }
     } else {
         if (UnAuthorizeUserCanNotAccess.includes(nextUrl.pathname)) {
@@ -22,3 +20,4 @@ export function middleware(request) {
         }
     }
 }
+

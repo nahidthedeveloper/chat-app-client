@@ -3,9 +3,12 @@ import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import { Typography } from '@mui/material'
 
-const Conversation = () => {
+const Conversation = ({ conversation, conversationHandler, active, user }) => {
+    const { id } = conversation
+    const { profile_picture, first_name, last_name } = user
     return (
         <Box
+            onClick={() => conversationHandler(id)}
             sx={{
                 display: 'flex',
                 alignItems: 'center',
@@ -19,14 +22,34 @@ const Conversation = () => {
                     transition: 'all 0.3s ease-in-out',
                 },
             }}
+            bgcolor={active && 'conversation.hover'}
         >
             <Avatar
-                alt="Remy Sharp"
-                src="https://scontent.fjsr14-1.fna.fbcdn.net/v/t39.30808-6/431543286_1527318811162112_9202064736696775829_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeEwbwzjUryv1-QrmzsILS3iLdyEqlZ-EIwt3ISqVn4QjI_Bnu3PfahD7o6ZspBvXYq35uBYrdNgPaS_QT9JOQvS&_nc_ohc=AOSL37FHyi8Q7kNvgHCS5E5&_nc_ht=scontent.fjsr14-1.fna&oh=00_AfCa9Ty56LssBdSA0mwQcXrPJgLaeXTR-JUYFEHTCDuAIw&oe=66347DE2"
+                alt="User"
+                src={`http://localhost:8000${profile_picture}`}
             />
             <Box sx={{ mt: '3px', width: '100%' }}>
-                <Typography sx={{ mb: 0.5 }} variant="subtitle2" fontWeight="medium">Nahid Hasan</Typography>
-                <Typography fontSize={12} fontWeight="normal">how are you Hello how are you to...</Typography>
+                <Typography
+                    sx={{ mb: 0.5 }}
+                    variant="subtitle2"
+                    fontWeight="medium"
+                >
+                    {first_name} {last_name}
+                </Typography>
+                <Typography
+                    fontSize={12}
+                    fontWeight="normal"
+                    sx={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: '1',
+                        WebkitBoxOrient: 'vertical',
+                    }}
+                >
+                    how are you Hello how are you to
+                    fdfmfnjdfsdkjfkdlfjdfhjkldfj
+                </Typography>
             </Box>
         </Box>
     )

@@ -1,11 +1,29 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import { Typography } from '@mui/material'
 import { useSession } from 'next-auth/react'
+import { httpClient } from '@/utils/api'
+import { toast } from 'react-toastify'
+import { TokenContext } from '@/context/tokenContext'
 
 const User = () => {
-    const { data, status } = useSession()
+    const tokenContext = useContext(TokenContext)
+    const [user, setUser] = useState()
+
+    useEffect(() => {
+        if (tokenContext === 'added') {
+            httpClient
+                .get(`/profile/`)
+                .then((response) => {
+                    setUser(response.data)
+                })
+                .catch((err) => {
+                    toast.error(err.message)
+                })
+        }
+    }, [tokenContext])
+
     return (
         <Box
             sx={{
@@ -16,12 +34,16 @@ const User = () => {
             }}
         >
             <Avatar
-                alt="Remy Sharp"
-                src="https://scontent.fjsr14-1.fna.fbcdn.net/v/t39.30808-6/431543286_1527318811162112_9202064736696775829_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeEwbwzjUryv1-QrmzsILS3iLdyEqlZ-EIwt3ISqVn4QjI_Bnu3PfahD7o6ZspBvXYq35uBYrdNgPaS_QT9JOQvS&_nc_ohc=AOSL37FHyi8Q7kNvgHCS5E5&_nc_ht=scontent.fjsr14-1.fna&oh=00_AfCa9Ty56LssBdSA0mwQcXrPJgLaeXTR-JUYFEHTCDuAIw&oe=66347DE2"
+                alt="User"
+                src={user && user[0].profile_picture}
             />
             <Box sx={{ mt: '3px', width: '100%' }}>
-                <Typography variant="subtitle2" fontWeight="medium">Nahid Hasan</Typography>
-                <Typography fontSize={12} fontWeight="normal">{data?.user.email}</Typography>
+                <Typography variant="subtitle2" fontWeight="medium">
+                    {user && user[0].first_name} {user && user[0].last_name}
+                </Typography>
+                <Typography fontSize={12} fontWeight="normal">
+                    {user && user[0].email}
+                </Typography>
             </Box>
         </Box>
     )

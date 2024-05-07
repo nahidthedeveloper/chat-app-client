@@ -1,8 +1,10 @@
 import React from 'react'
 import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
+import { formattedDateTime } from '@/utils/formattedDateTime'
 
-const Receiver = () => {
+const Receiver = ({ messages }) => {
+    const { message, timestamp } = messages
     return (
         <Box sx={{ maxWidth: '80%' }}>
             <Typography
@@ -13,11 +15,10 @@ const Receiver = () => {
                     py: '10px',
                     borderRadius: '10px',
                     fontSize: '14px',
+                    display: 'inline-block',
                 }}
             >
-                Hello how are you Hello how are you Hello how are you Hello how
-                are you Hello how are youHello how are you Hello how are
-                youHello how are
+                {message}
             </Typography>
             <Typography
                 sx={{
@@ -26,7 +27,7 @@ const Receiver = () => {
                     fontSize: '10px',
                 }}
             >
-                02:30 PM
+                {formattedDateTime(timestamp)}
             </Typography>
         </Box>
     )

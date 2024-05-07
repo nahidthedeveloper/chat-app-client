@@ -2,19 +2,97 @@
 import * as React from 'react'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
-import { Divider, Typography } from '@mui/material'
+import { useContext, useEffect, useState } from 'react'
+import { httpClient } from '@/utils/api'
+import { toast } from 'react-toastify'
+import { TokenContext } from '@/context/tokenContext'
 import Avatar from '@mui/material/Avatar'
 import ChatIcon from '@mui/icons-material/Chat'
-import SettingsIcon from '@mui/icons-material/Settings'
+import SendIcon from '@mui/icons-material/Send'
+import { Button, Divider, Typography } from '@mui/material'
 import packageJson from '../../../package.json'
-import Conversation from '@/components/Conversation/Conversation'
-import Receiver from '@/components/message/Receiver'
-import Sender from '@/components/message/Sender'
 import TextField from '@mui/material/TextField'
+import Conversation from '@/components/Conversation/Conversation'
 import User from '@/components/User'
+import SettingsIcon from '@mui/icons-material/Settings'
+import { useSession } from 'next-auth/react'
 import DeleteMessage from '@/components/message/DeleteMessage'
+import Sender from '@/components/message/Sender'
+import Receiver from '@/components/message/Receiver'
+import { useForm } from 'react-hook-form'
+import SelectedUser from '@/components/SelectedUser'
 
-export default function MessageChild() {
+const Message = () => {
+    const tokenContext = useContext(TokenContext)
+    const { data } = useSession()
+    const [conversations, setConversations] = useState([])
+    const [messages, setMessages] = useState([])
+    const [activeConversation, setActiveConversation] = useState(null)
+
+    const { register, handleSubmit, reset } = useForm()
+
+
+    let socket = activeConversation ? new WebSocket(`ws://localhost:8000/ws/chat/${activeConversation}/`) : null
+
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            if (tokenContext === 'added') {
+                httpClient
+                    .get(`/chat/conversation/`)
+                    .then((response) => {
+                        setConversations(response.data)
+                        const firstMessage = Object.values(response.data)[0].id
+                        conversationHandler(firstMessage)
+                        setActiveConversation(firstMessage)
+                    })
+                    .catch((err) => {
+                        toast.error(err.message)
+                    })
+            }
+            if (socket) {
+                socket.onopen = function(e) {
+                    console.log('Connection Established')
+                    console.log(e)
+
+                }
+
+                socket.onclose = function(e) {
+                    console.log('Connection Lost')
+                }
+                socket.onerror = function(e) {
+                    console.log('Error Occur')
+                }
+
+                socket.onmessage = function(e) {
+                    console.log(e)
+                    const data = JSON.parse(e.data)
+                    console.log(data)
+
+                }
+            }
+
+        }
+
+    }, [tokenContext])
+
+    const conversationHandler = (id) => {
+        setActiveConversation(id)
+        httpClient
+            .get(`/chat/messages/${id}`)
+            .then((response) => {
+                setMessages(response.data)
+            })
+            .catch((err) => {
+                toast.error(err.message)
+            })
+    }
+
+    const messageSubmit = (data) => {
+        socket.send(JSON.stringify(data))
+        reset()
+    }
+
     return (
         <Box
             sx={{
@@ -48,22 +126,27 @@ export default function MessageChild() {
                                 </Box>
                             </Box>
                         </Box>
-                        <Box sx={{
-                            px: 2,
-                            mb: 2,
-                        }}>
+                        <Box
+                            sx={{
+                                px: 2,
+                                mb: 2,
+                            }}
+                        >
                             <TextField
                                 fullWidth
                                 placeholder="Find people here.."
                                 size="small"
                                 sx={{
-                                    '& .MuiInputBase-root': { height: 46, fontSize: '14px', width: '100%' },
+                                    '& .MuiInputBase-root': {
+                                        height: 46,
+                                        fontSize: '14px',
+                                        width: '100%',
+                                    },
                                 }}
                             />
                         </Box>
                         <Box
                             sx={{
-
                                 maxHeight: '63.5vh',
                                 height: '100%',
                                 overflowY: 'scroll',
@@ -78,24 +161,17 @@ export default function MessageChild() {
                                 },
                             }}
                         >
-                            <Conversation />
-                            <Conversation />
-                            <Conversation />
-                            <Conversation />
-                            <Conversation />
-                            <Conversation />
-                            <Conversation />
-                            <Conversation />
-                            <Conversation />
-                            <Conversation />
-                            <Conversation />
-                            <Conversation />
-                            <Conversation />
-                            <Conversation />
-                            <Conversation />
-                            <Conversation />
-                            <Conversation />
-                            <Conversation />
+                            {conversations?.map((conversation, index) => (
+                                <Conversation
+                                    key={index}
+                                    conversation={conversation}
+                                    user={data?.user.user_id === conversation?.user1.id ? conversation?.user2 : conversation?.user1}
+                                    conversationHandler={conversationHandler}
+                                    active={
+                                        conversation.id === activeConversation
+                                    }
+                                />
+                            ))}
                         </Box>
                         <Divider variant="middle" />
                         <Box
@@ -134,7 +210,7 @@ export default function MessageChild() {
                                 alignItems: 'center',
                             }}
                         >
-                            <User />
+                            <SelectedUser />
                             <DeleteMessage />
                         </Box>
                         <Divider variant="middle" />
@@ -159,15 +235,13 @@ export default function MessageChild() {
                                 },
                             }}
                         >
-                            <Sender />
-                            <Receiver />
-                            <Sender />
-                            <Receiver />
-                            <Sender />
-                            <Receiver />
-                            <Sender />
-                            <Receiver />
-                            <Sender />
+                            {messages?.map((message, index) =>
+                                message.sender === data?.user.user_id ? (
+                                    <Sender key={index} messages={message} />
+                                ) : (
+                                    <Receiver key={index} messages={message} />
+                                ),
+                            )}
                         </Box>
 
                         <Divider variant="middle" />
@@ -179,12 +253,30 @@ export default function MessageChild() {
                                 bottom: '10px',
                             }}
                         >
-                            <TextField
-                                maxRows="2"
-                                multiline
-                                fullWidth
-                                placeholder="type your message..."
-                            />
+                            <form onSubmit={handleSubmit(messageSubmit)} style={{ position: 'relative' }}>
+                                <TextField
+                                    {...register('message', { required: true })}
+                                    variant="outlined"
+                                    fullWidth
+                                    autoFocus
+                                    placeholder="Type your message here..."
+                                    sx={{
+                                        paddingRight: '40px',
+                                    }}
+                                />
+                                <Button type="submit"
+                                        sx={{
+                                            minWidth: 'auto',
+                                        }}
+                                        style={{
+                                            position: 'absolute',
+                                            right: '-10px',
+                                            transform: 'translateY(50%)',
+                                            top: '-8px',
+                                        }}>
+                                    <SendIcon />
+                                </Button>
+                            </form>
                         </Box>
                     </Box>
                 </Grid>
@@ -192,3 +284,5 @@ export default function MessageChild() {
         </Box>
     )
 }
+
+export default Message

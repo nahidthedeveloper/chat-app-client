@@ -108,7 +108,7 @@ export default function SignUp() {
                                 fullWidth
                                 label="Last Name"
                                 name="lastName"
-                                id='lastName'
+                                id="lastName"
                                 autoComplete="family-name"
                                 error={!!errors.last_name}
                                 {...register('last_name')}
@@ -181,7 +181,14 @@ export default function SignUp() {
                         sx={{ mt: 3, mb: 2 }}
                         disabled={!agree}
                     >
-                        {loader ? <CircularProgress sx={{color: 'green'}} size={30} /> : 'Sign Up'}
+                        {loader ? (
+                            <CircularProgress
+                                sx={{ color: 'green' }}
+                                size={30}
+                            />
+                        ) : (
+                            'Sign Up'
+                        )}
                     </Button>
                     <Grid container justifyContent="flex-end">
                         <Grid item>

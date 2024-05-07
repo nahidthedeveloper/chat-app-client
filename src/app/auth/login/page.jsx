@@ -52,7 +52,7 @@ export default function SignIn() {
                 }
             } else {
                 toast.success('Login Successful')
-                router.push(callbackUrl ? callbackUrl : '/messages')
+                router.push(callbackUrl ? callbackUrl : '/conversation')
             }
         })
     }

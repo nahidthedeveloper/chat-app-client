@@ -8,7 +8,7 @@ import Navbar from '@/components/Navbar'
 
 const lightTheme = createTheme({
     typography: {
-        "fontFamily": `"Inter", sans-serif`,
+        fontFamily: `"Inter", sans-serif`,
     },
     palette: {
         mode: 'light',
@@ -23,13 +23,13 @@ const lightTheme = createTheme({
         conversation: {
             border: 'rgb(212,215,225)',
             hover: '#f3f3f8',
-        }
+        },
     },
 })
 
 const darkTheme = createTheme({
     typography: {
-        "fontFamily": `"Inter", sans-serif`,
+        fontFamily: `"Inter", sans-serif`,
     },
     palette: {
         mode: 'dark',
@@ -44,7 +44,7 @@ const darkTheme = createTheme({
         conversation: {
             border: '#3c3d4140',
             hover: '#3c3d41',
-        }
+        },
     },
 })
 

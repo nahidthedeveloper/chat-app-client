@@ -35,7 +35,11 @@ export default function DeleteMessage() {
 
     return (
         <>
-            <DeleteIcon fontSize="medium" cursor="pointer" onClick={handleClickOpen} />
+            <DeleteIcon
+                fontSize="medium"
+                cursor="pointer"
+                onClick={handleClickOpen}
+            />
             <Dialog
                 open={open}
                 onClose={handleClose}

@@ -7,7 +7,12 @@ const Sender = ({ messages }) => {
     const { message, timestamp } = messages
     return (
         <Box display="flex" flexDirection="row-reverse">
-            <Box sx={{ maxWidth: '80%' }}>
+            <Box sx={{
+                maxWidth: '80%',
+                py: '6px',
+                textAlign: 'right',
+            }}
+            >
                 <Typography
                     sx={{
                         lineHeight: '20px',
@@ -16,6 +21,10 @@ const Sender = ({ messages }) => {
                         py: '10px',
                         borderRadius: '10px',
                         fontSize: '14px',
+                        wordWrap: 'break-word',
+                        display: 'inline-block',
+                        maxWidth: '100%',
+                        textAlign: 'left',
                     }}
                 >
                     {message}

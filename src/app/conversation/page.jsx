@@ -22,59 +22,84 @@ import Receiver from '@/components/message/Receiver'
 import { useForm } from 'react-hook-form'
 import SelectedUser from '@/components/SelectedUser'
 
+
 const Message = () => {
     const tokenContext = useContext(TokenContext)
     const { data } = useSession()
     const [conversations, setConversations] = useState([])
     const [messages, setMessages] = useState([])
     const [activeConversation, setActiveConversation] = useState(null)
-
+    const [activeConversationData, setActiveConversationData] = useState([])
+    const [socketData, setSocketData] = useState(null)
     const { register, handleSubmit, reset } = useForm()
-
-
-    let socket = activeConversation ? new WebSocket(`ws://localhost:8000/ws/chat/${activeConversation}/`) : null
+    const user = data?.user.user_id
 
 
     useEffect(() => {
-        if (typeof window !== 'undefined') {
-            if (tokenContext === 'added') {
-                httpClient
-                    .get(`/chat/conversation/`)
-                    .then((response) => {
-                        setConversations(response.data)
-                        const firstMessage = Object.values(response.data)[0].id
-                        conversationHandler(firstMessage)
-                        setActiveConversation(firstMessage)
-                    })
-                    .catch((err) => {
-                        toast.error(err.message)
-                    })
-            }
-            if (socket) {
-                socket.onopen = function(e) {
-                    console.log('Connection Established')
-                    console.log(e)
+        if (conversations) {
+            let activeUser = conversations.filter((conversation) => conversation.id === activeConversation)
+            setActiveConversationData(activeUser[0])
+        }
+    }, [activeConversation, conversations])
 
-                }
-
-                socket.onclose = function(e) {
-                    console.log('Connection Lost')
-                }
-                socket.onerror = function(e) {
-                    console.log('Error Occur')
-                }
-
-                socket.onmessage = function(e) {
-                    console.log(e)
-                    const data = JSON.parse(e.data)
-                    console.log(data)
-
-                }
-            }
-
+    useEffect(() => {
+        if (tokenContext === 'added') {
+            httpClient
+                .get(`/chat/conversation/`)
+                .then((response) => {
+                    setConversations(response.data)
+                    const firstMessage = Object.values(response.data)[0].id
+                    conversationHandler(firstMessage)
+                })
+                .catch((err) => {
+                    toast.error(err.message)
+                })
         }
 
     }, [tokenContext])
+
+    useEffect(() => {
+        let socket = null
+        if (activeConversation) {
+            socket = new WebSocket(`ws://localhost:8000/ws/chat/${activeConversation}/`)
+            socket.onopen = function(e) {
+                console.log('Connection Established')
+            }
+
+            socket.onclose = function(e) {
+                console.log('Connection Lost')
+            }
+            socket.onerror = function(e) {
+                console.log('Error Occur')
+            }
+
+            socket.onmessage = function(e) {
+                let data = JSON.parse(e.data)
+                let message = data.message
+
+                // Handle the received message (update UI, etc.)
+
+                const msg = {
+                    id: 200,
+                    message: message,
+                    conversation: 1,
+                    sender: data.sender,
+                }
+                setMessages(prev => [...prev, {
+                    id: 122,
+                    message: 'testyz',
+                    conversation: 1,
+
+                }])
+                console.log(messages)
+
+            }
+
+        }
+        return () => {
+            socket?.close()
+        }
+    }, [activeConversation])
 
     const conversationHandler = (id) => {
         setActiveConversation(id)
@@ -89,21 +114,26 @@ const Message = () => {
     }
 
     const messageSubmit = (data) => {
-        socket.send(JSON.stringify(data))
+        let payload = {
+            message: data.message,
+            sender: user,
+        }
+        messages.unshift(payload)
         reset()
     }
 
     return (
         <Box
             sx={{
-                flexGrow: 1,
                 mt: '10px',
                 bgcolor: 'chatBody.main',
                 borderRadius: '20px',
+                mb: '6px',
+                height: '760px',
             }}
         >
-            <Grid container height="88vh">
-                <Grid item xs={12} md={3}>
+            <Grid container>
+                <Grid item md={3}>
                     <Box sx={{ height: '100%' }}>
                         <Box sx={{ px: 2, py: 2, mb: 1 }}>
                             <Box
@@ -147,8 +177,7 @@ const Message = () => {
                         </Box>
                         <Box
                             sx={{
-                                maxHeight: '63.5vh',
-                                height: '100%',
+                                height: '529px',
                                 overflowY: 'scroll',
                                 '&::-webkit-scrollbar': {
                                     width: '4px',
@@ -165,7 +194,7 @@ const Message = () => {
                                 <Conversation
                                     key={index}
                                     conversation={conversation}
-                                    user={data?.user.user_id === conversation?.user1.id ? conversation?.user2 : conversation?.user1}
+                                    user={data?.user.user_id === conversation?.user1.id ? conversation.user2 : conversation.user1}
                                     conversationHandler={conversationHandler}
                                     active={
                                         conversation.id === activeConversation
@@ -177,7 +206,7 @@ const Message = () => {
                         <Box
                             sx={{
                                 px: '16px',
-                                mt: '20px',
+                                my: '20px',
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
@@ -189,16 +218,13 @@ const Message = () => {
                     </Box>
                 </Grid>
 
-                <Grid item xs={12} md={9}>
+                <Grid item md={9}>
                     <Box
                         sx={{
                             bgcolor: 'chatBody.light',
-                            height: '100%',
                             borderTopRightRadius: '12px',
                             borderBottomRightRadius: '12px',
-                        }}
-                        style={{
-                            position: 'relative',
+                            height: '760px',
                         }}
                     >
                         <Box
@@ -210,7 +236,7 @@ const Message = () => {
                                 alignItems: 'center',
                             }}
                         >
-                            <SelectedUser />
+                            <SelectedUser user={data?.user.user_id === activeConversationData?.user1?.id ? activeConversationData?.user2 : activeConversationData?.user1}/>
                             <DeleteMessage />
                         </Box>
                         <Divider variant="middle" />
@@ -221,8 +247,7 @@ const Message = () => {
                                 display: 'flex',
                                 flexDirection: 'column-reverse',
                                 padding: '30px',
-                                maxHeight: '70vh',
-                                height: '100%',
+                                height: '590px',
                                 overflowY: 'scroll',
                                 '&::-webkit-scrollbar': {
                                     width: '4px',
@@ -247,11 +272,7 @@ const Message = () => {
                         <Divider variant="middle" />
 
                         <Box
-                            sx={{ px: '30px', width: '100%' }}
-                            style={{
-                                position: 'absolute',
-                                bottom: '10px',
-                            }}
+                            sx={{ px: '30px', width: '100%', my: '16px' }}
                         >
                             <form onSubmit={handleSubmit(messageSubmit)} style={{ position: 'relative' }}>
                                 <TextField

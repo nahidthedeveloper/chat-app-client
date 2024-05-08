@@ -6,7 +6,7 @@ import { formattedDateTime } from '@/utils/formattedDateTime'
 const Receiver = ({ messages }) => {
     const { message, timestamp } = messages
     return (
-        <Box sx={{ maxWidth: '80%' }}>
+        <Box sx={{ maxWidth: '80%', py: '6px' }}>
             <Typography
                 sx={{
                     lineHeight: '20px',
@@ -15,7 +15,9 @@ const Receiver = ({ messages }) => {
                     py: '10px',
                     borderRadius: '10px',
                     fontSize: '14px',
+                    wordWrap: 'break-word',
                     display: 'inline-block',
+                    maxWidth: '100%',
                 }}
             >
                 {message}

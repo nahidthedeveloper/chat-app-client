@@ -3,7 +3,7 @@ import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import { Typography } from '@mui/material'
 
-const SelectedUser = () => {
+const SelectedUser = ({ user }) => {
     return (
         <Box
             sx={{
@@ -15,14 +15,14 @@ const SelectedUser = () => {
         >
             <Avatar
                 alt="User"
-                src=""
+                src={`http://localhost:8000${user?.profile_picture}`}
             />
             <Box sx={{ mt: '3px', width: '100%' }}>
                 <Typography variant="subtitle2" fontWeight="medium">
-                    Hello
+                    {user?.first_name} {user?.last_name}
                 </Typography>
                 <Typography fontSize={12} fontWeight="normal">
-                    Hello@gmail.com
+                    {user?.email}
                 </Typography>
             </Box>
         </Box>

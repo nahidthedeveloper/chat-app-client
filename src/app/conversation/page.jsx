@@ -30,7 +30,6 @@ const Message = () => {
     const [messages, setMessages] = useState([])
     const [activeConversation, setActiveConversation] = useState(null)
     const [activeConversationData, setActiveConversationData] = useState([])
-    const [socketData, setSocketData] = useState(null)
     const { register, handleSubmit, reset } = useForm()
     const user = data?.user.user_id
 
@@ -75,24 +74,10 @@ const Message = () => {
 
             socket.onmessage = function(e) {
                 let data = JSON.parse(e.data)
-                let message = data.message
-
-                // Handle the received message (update UI, etc.)
-
-                const msg = {
-                    id: 200,
-                    message: message,
-                    conversation: 1,
-                    sender: data.sender,
+                let resMessage = data.message
+                if (resMessage !== undefined) {
+                    setMessages(prevMessages => [resMessage, ...prevMessages])
                 }
-                setMessages(prev => [...prev, {
-                    id: 122,
-                    message: 'testyz',
-                    conversation: 1,
-
-                }])
-                console.log(messages)
-
             }
 
         }
@@ -114,11 +99,14 @@ const Message = () => {
     }
 
     const messageSubmit = (data) => {
-        let payload = {
-            message: data.message,
-            sender: user,
-        }
-        messages.unshift(payload)
+        httpClient
+            .post(`/chat/sent_message/${activeConversation}/`, { ...data })
+            .then((response) => {
+                console.log(response.data)
+            })
+            .catch((err) => {
+                toast.error(err.message)
+            })
         reset()
     }
 
@@ -236,7 +224,8 @@ const Message = () => {
                                 alignItems: 'center',
                             }}
                         >
-                            <SelectedUser user={data?.user.user_id === activeConversationData?.user1?.id ? activeConversationData?.user2 : activeConversationData?.user1}/>
+                            <SelectedUser
+                                user={data?.user.user_id === activeConversationData?.user1?.id ? activeConversationData?.user2 : activeConversationData?.user1} />
                             <DeleteMessage />
                         </Box>
                         <Divider variant="middle" />

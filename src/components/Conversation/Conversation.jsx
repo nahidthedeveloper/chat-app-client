@@ -5,7 +5,6 @@ import { Typography } from '@mui/material'
 
 const Conversation = ({ conversation, conversationHandler, active, user }) => {
     const { id } = conversation
-    const { profile_picture, first_name, last_name } = user
     return (
         <Box
             onClick={() => conversationHandler(id)}
@@ -26,7 +25,7 @@ const Conversation = ({ conversation, conversationHandler, active, user }) => {
         >
             <Avatar
                 alt="User"
-                src={`http://localhost:8000${profile_picture}`}
+                src={`http://localhost:8000${user?.profile_picture}`}
             />
             <Box sx={{ mt: '3px', width: '100%' }}>
                 <Typography
@@ -34,7 +33,7 @@ const Conversation = ({ conversation, conversationHandler, active, user }) => {
                     variant="subtitle2"
                     fontWeight="medium"
                 >
-                    {first_name} {last_name}
+                    {user?.first_name} {user?.last_name}
                 </Typography>
                 <Typography
                     fontSize={12}

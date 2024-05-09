@@ -42,24 +42,51 @@ const LeftSide = (props) => {
                     mb: 2,
                 }}
             >
-                <TextField
-                    onChange={e => searchUserHandler(e.target.value)}
-                    fullWidth
-                    placeholder="Find people here.."
-                    size="small"
-                    sx={{
-                        '& .MuiInputBase-root': {
-                            height: 46,
-                            fontSize: '14px',
-                            width: '100%',
+                <Box sx={{ position: 'relative' }}>
+                    <TextField
+                        onChange={e => searchUserHandler(e.target.value)}
+                        fullWidth
+                        placeholder="Find people here.."
+                        size="small"
+                        sx={{
+                            '& .MuiInputBase-root': {
+                                height: 46,
+                                fontSize: '14px',
+                                width: '100%',
+                            },
+                        }}
+                    />
+                    <Box sx={{
+                        display: 'none',
+                        position: 'absolute',
+                        bgcolor: 'chatBody.light',
+                        width: '100%',
+                        maxHeight: '400px',
+                        padding: '10px',
+                        mt: '4px',
+                        overflow: 'auto',
+                        wordWrap: 'break-word',
+                        '&::-webkit-scrollbar': {
+                            width: '4px',
                         },
-                    }}
-                />
+                        '&::-webkit-scrollbar-track': {
+                            background: '#424242',
+                        },
+                        '&::-webkit-scrollbar-thumb': {
+                            backgroundColor: '#808080',
+                        },
+                    }}>
+                        user here
+                        user here
+                        user here
+
+                    </Box>
+                </Box>
             </Box>
             <Box
                 sx={{
                     height: '529px',
-                    overflowY: 'scroll',
+                    overflow: 'auto',
                     '&::-webkit-scrollbar': {
                         width: '4px',
                     },

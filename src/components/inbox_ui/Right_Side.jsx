@@ -45,7 +45,7 @@ const RightSide = (props) => {
                     flexDirection: 'column-reverse',
                     padding: '30px',
                     height: '590px',
-                    overflowY: 'scroll',
+                    overflow: 'auto',
                     '&::-webkit-scrollbar': {
                         width: '4px',
                     },

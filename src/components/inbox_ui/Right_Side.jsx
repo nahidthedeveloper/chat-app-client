@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Box from '@mui/material/Box'
 import SelectedUser from '@/components/SelectedUser'
 import DeleteMessage from '@/components/message/DeleteMessage'
@@ -14,6 +14,7 @@ const RightSide = (props) => {
     const { activeConversationData, messages, messageSubmit } = props
     const { register, handleSubmit, reset } = useForm()
     const { data } = useSession()
+
     return (
         <Box
             sx={{
@@ -71,7 +72,7 @@ const RightSide = (props) => {
             <Box
                 sx={{ px: '30px', width: '100%', mt: '7px' }}
             >
-                <Box sx={{ bgcolor: 'chatBody.main', height: '76px', borderRadius: '10px' }}>
+                <Box sx={{ bgcolor: 'chatBody.main', height: '74px', borderRadius: '10px' }}>
                     <form onSubmit={handleSubmit(messageSubmit)} style={{ position: 'relative' }}>
                         <TextField
                             {...register('message', { required: true })}
@@ -81,6 +82,7 @@ const RightSide = (props) => {
                             maxRows={2}
                             multiline
                             placeholder="Type a message..."
+                            onChange={(event) => setText(event.target.value)}
                             sx={{
                                 paddingRight: '40px',
                                 '& fieldset': { border: 'none' },

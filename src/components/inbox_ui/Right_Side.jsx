@@ -82,7 +82,6 @@ const RightSide = (props) => {
                             maxRows={2}
                             multiline
                             placeholder="Type a message..."
-                            onChange={(event) => setText(event.target.value)}
                             sx={{
                                 paddingRight: '40px',
                                 '& fieldset': { border: 'none' },

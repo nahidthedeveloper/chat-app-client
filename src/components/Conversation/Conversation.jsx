@@ -1,10 +1,12 @@
 import React from 'react'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
-import { Typography } from '@mui/material'
+import { Button, Typography } from '@mui/material'
+import { useSession } from 'next-auth/react'
 
 const Conversation = ({ conversation, conversationHandler, active, user }) => {
-    const { id } = conversation
+    const { data } = useSession()
+    const { id, requester, is_friend, is_pending } = conversation
     return (
         <Box
             onClick={() => conversationHandler(id)}
@@ -46,9 +48,39 @@ const Conversation = ({ conversation, conversationHandler, active, user }) => {
                         WebkitBoxOrient: 'vertical',
                     }}
                 >
-                    how are you Hello how are you to
-                    fdfmfnjdfsdkjfkdlfjdfhjkldfj
+                    last sms here
                 </Typography>
+                {
+                    !is_friend &&
+                    <Box sx={{ mt: '6px', width: '100%' }}>
+                        {(requester === data?.user?.user_id && is_pending) &&
+                            <Box sx={{ width: '100%', display: 'flex', gap: '12px' }}>
+                                <Button variant="contained" color="error" size="small"
+                                        sx={{ textTransform: 'capitalize' }}>
+                                    Cancel
+                                </Button>
+                                <Button variant="contained" color="success" size="small"
+                                        sx={{ textTransform: 'capitalize' }}
+                                        disabled
+                                >
+                                    Requested
+                                </Button>
+                            </Box>
+                        }
+                        {(requester !== data?.user?.user_id && is_pending) &&
+                            <Box sx={{ width: '100%', display: 'flex', gap: '12px' }}>
+                                <Button variant="contained" color="error" size="small"
+                                        sx={{ textTransform: 'capitalize' }}>
+                                    Reject
+                                </Button>
+                                <Button variant="contained" color="success" size="small"
+                                        sx={{ textTransform: 'capitalize' }}>
+                                    Accept
+                                </Button>
+                            </Box>
+                        }
+                    </Box>
+                }
             </Box>
         </Box>
     )

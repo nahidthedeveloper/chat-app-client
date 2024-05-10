@@ -1,9 +1,12 @@
 import React from 'react'
 import Box from '@mui/material/Box'
 import Avatar from '@mui/material/Avatar'
-import { Typography } from '@mui/material'
+import { Button, Typography } from '@mui/material'
+import { useSession } from 'next-auth/react'
 
 const SearchUser = ({ user }) => {
+    const { data } = useSession()
+    let ids = data?.user?.user_id
     return (
         <Box
             sx={{
@@ -14,12 +17,8 @@ const SearchUser = ({ user }) => {
                 cursor: 'pointer',
                 borderBottom: '1px solid',
                 borderColor: 'conversation.border',
-                '&:hover': {
-                    backgroundColor: 'conversation.hover',
-                    transition: 'all 0.3s ease-in-out',
-                },
+                overflow: 'hidden',
             }}
-            // bgcolor={'conversation.hover'}
         >
             <Avatar
                 alt="User"
@@ -53,6 +52,44 @@ const SearchUser = ({ user }) => {
                 >
                     {user?.email}
                 </Typography>
+                {/*ok*/}
+                {(user?.is_friend && !user?.is_pending) && <Typography fontSize="10px">Your Friend</Typography>}
+
+                <Box sx={{ mt: '6px', width: '100%' }}>
+                    {/*ok*/}
+                    {(user?.requester === data?.user?.user_id && user?.is_pending) &&
+                        <Box sx={{ width: '100%', display: 'flex', gap: '12px' }}>
+                            <Button variant="contained" color="error" size="small"
+                                    sx={{ textTransform: 'capitalize' }}>
+                                Cancel
+                            </Button>
+                            <Button variant="contained" color="success" size="small"
+                                    sx={{ textTransform: 'capitalize' }}
+                                    disabled
+                            >
+                                Requested
+                            </Button>
+                        </Box>
+                    }
+
+                    {(!user?.is_friend && !user?.requester) &&
+                        <Button variant="contained" color="info" size="small" sx={{ textTransform: 'capitalize' }}>
+                            Add Friend
+                        </Button>
+                    }
+                    {((user?.requester && user?.requester !== data?.user?.user_id) && user?.is_pending) &&
+                        <Box sx={{ width: '100%', display: 'flex', gap: '12px' }}>
+                            <Button variant="contained" color="error" size="small"
+                                    sx={{ textTransform: 'capitalize' }}>
+                                Reject
+                            </Button>
+                            <Button variant="contained" color="success" size="small"
+                                    sx={{ textTransform: 'capitalize' }}>
+                                Accept
+                            </Button>
+                        </Box>
+                    }
+                </Box>
             </Box>
         </Box>
     )

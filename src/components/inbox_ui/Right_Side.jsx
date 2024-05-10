@@ -11,8 +11,8 @@ import { useForm } from 'react-hook-form'
 import { useSession } from 'next-auth/react'
 
 const RightSide = (props) => {
-    const { activeConversationData, messages, messageSubmit } = props
-    const { register, handleSubmit, reset } = useForm()
+    const { activeConversationData, messages, messageSubmit, hookForm } = props
+    const { register, handleSubmit } = hookForm
     const { data } = useSession()
 
     return (

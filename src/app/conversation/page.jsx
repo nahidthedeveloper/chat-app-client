@@ -14,13 +14,19 @@ import { useForm } from 'react-hook-form'
 
 const Message = () => {
     const tokenContext = useContext(TokenContext)
-    const { reset } = useForm()
+    const { register, handleSubmit, reset } = useForm()
     const { data } = useSession()
     const [conversations, setConversations] = useState([])
     const [messages, setMessages] = useState([])
     const [activeConversation, setActiveConversation] = useState(null)
     const [activeConversationData, setActiveConversationData] = useState([])
     const user = data?.user.user_id
+
+    const hookForm = {
+        register,
+        handleSubmit,
+        reset,
+    }
 
 
     useEffect(() => {
@@ -124,6 +130,7 @@ const Message = () => {
                     <RightSide messages={messages}
                                activeConversationData={activeConversationData}
                                messageSubmit={messageSubmit}
+                               hookForm={hookForm}
                     />
                 </Grid>
             </Grid>

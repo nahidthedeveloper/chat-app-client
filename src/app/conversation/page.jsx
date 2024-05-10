@@ -20,7 +20,6 @@ const Message = () => {
     const [messages, setMessages] = useState([])
     const [activeConversation, setActiveConversation] = useState(null)
     const [activeConversationData, setActiveConversationData] = useState([])
-    const [filterUser, setFilterUser] = useState()
     const user = data?.user.user_id
 
 
@@ -102,16 +101,6 @@ const Message = () => {
         reset()
     }
 
-    const searchUserHandler = (data) => {
-        httpClient
-            .get(`/users/?search=${data}`)
-            .then((response) => {
-                setFilterUser(response.data)
-            })
-            .catch((err) => {
-                toast.error(err.message)
-            })
-    }
 
     return (
         <Box
@@ -127,7 +116,6 @@ const Message = () => {
                 <Grid item md={3}>
                     <LeftSide conversations={conversations}
                               activeConversation={activeConversation}
-                              searchUserHandler={searchUserHandler}
                               conversationHandler={conversationHandler}
                     />
                 </Grid>

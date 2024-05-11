@@ -15,6 +15,14 @@ const RightSide = (props) => {
     const { register, handleSubmit } = hookForm
     const { data } = useSession()
 
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            handleSubmit(messageSubmit)();
+        }
+    };
+
+
     return (
         <Box
             sx={{
@@ -76,6 +84,10 @@ const RightSide = (props) => {
                     <form onSubmit={handleSubmit(messageSubmit)} style={{ position: 'relative' }}>
                         <TextField
                             {...register('message', { required: true })}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && e.shiftKey) e.stopPropagation()
+                            }}
+                            onKeyPress={handleKeyPress}
                             variant="outlined"
                             fullWidth
                             autoFocus

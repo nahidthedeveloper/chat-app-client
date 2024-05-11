@@ -99,10 +99,10 @@ const Message = () => {
         httpClient
             .post(`/chat/sent_message/${activeConversation}/`, { ...data })
             .then((response) => {
-                console.log(response.data)
+                console.log(response.data.message)
             })
             .catch((err) => {
-                toast.error(err.message)
+                toast.error(err.response.data.message)
             })
         reset()
     }

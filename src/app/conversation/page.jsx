@@ -20,6 +20,7 @@ const Message = () => {
     const [messages, setMessages] = useState([])
     const [activeConversation, setActiveConversation] = useState(null)
     const [activeConversationData, setActiveConversationData] = useState([])
+    const [changer, setChanger] = useState(false)
     const user = data?.user.user_id
 
     const hookForm = {
@@ -37,13 +38,33 @@ const Message = () => {
     }, [activeConversation, conversations])
 
     useEffect(() => {
+        const fetchData = () => {
+            httpClient
+                .get(`/chat/conversation_list/`)
+                .then((response) => {
+                    setConversations(response.data)
+                })
+                .catch((err) => {
+                    console.log(err)
+                    toast.error(err.message)
+                })
+        }
+
+        fetchData()
+
+        const intervalId = setInterval(fetchData, 10000)
+        return () => clearInterval(intervalId)
+
+    }, [changer])
+
+    useEffect(() => {
         if (tokenContext === 'added') {
             httpClient
-                .get(`/chat/conversation/`)
+                .get(`/chat/conversation_list/`)
                 .then((response) => {
                     setConversations(response.data)
                     const firstMessage = response.data.length > 0 ? Object.values(response.data)[0].id : null
-                    conversationHandler(firstMessage)
+                    oneConversationGetHandler(firstMessage)
                 })
                 .catch((err) => {
                     console.log(err)
@@ -81,11 +102,11 @@ const Message = () => {
         }
     }, [activeConversation])
 
-    const conversationHandler = (id) => {
+    const oneConversationGetHandler = (id) => {
         setActiveConversation(id)
         if (id) {
             httpClient
-                .get(`/chat/messages/${id}`)
+                .get(`/chat/conversation/${id}`)
                 .then((response) => {
                     setMessages(response.data)
                 })
@@ -95,6 +116,46 @@ const Message = () => {
         }
     }
 
+    const createConversationHandler = (id) => {
+        // id means receiver (user) id
+        httpClient
+            .post(`/chat/create_conversation/${id}/`)
+            .then((response) => {
+                console.log(response.data.message)
+            })
+            .catch((err) => {
+                toast.error(err.response?.data?.message)
+            })
+        setChanger(!changer)
+    }
+
+    const acceptConversationHandler = (id, requester) => {
+        let payload = {
+            requester,
+        }
+        httpClient
+            .post(`/chat/accept_conversation/${id}/`, { ...payload })
+            .then((response) => {
+                console.log(response.data.message)
+            })
+            .catch((err) => {
+                toast.error(err.response?.data?.message)
+            })
+        setChanger(!changer)
+    }
+
+    const deleteConversationHandler = (id) => {
+        httpClient
+            .post(`/chat/delete_conversation/${id}/`)
+            .then((response) => {
+                console.log(response.data.message)
+            })
+            .catch((err) => {
+                toast.error(err.response?.data?.message)
+            })
+        setChanger(!changer)
+    }
+
     const messageSubmit = (data) => {
         httpClient
             .post(`/chat/sent_message/${activeConversation}/`, { ...data })
@@ -102,7 +163,7 @@ const Message = () => {
                 console.log(response.data.message)
             })
             .catch((err) => {
-                toast.error(err.response.data.message)
+                toast.error(err.response?.data?.message)
             })
         reset()
     }
@@ -122,7 +183,10 @@ const Message = () => {
                 <Grid item md={3}>
                     <LeftSide conversations={conversations}
                               activeConversation={activeConversation}
-                              conversationHandler={conversationHandler}
+                              oneConversationGetHandler={oneConversationGetHandler}
+                              createConversationHandler={createConversationHandler}
+                              acceptConversationHandler={acceptConversationHandler}
+                              deleteConversationHandler={deleteConversationHandler}
                     />
                 </Grid>
 

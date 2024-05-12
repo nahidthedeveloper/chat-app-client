@@ -4,7 +4,13 @@ import Avatar from '@mui/material/Avatar'
 import { Button, Typography } from '@mui/material'
 import { useSession } from 'next-auth/react'
 
-const SearchUser = ({ user }) => {
+const SearchUser = ({
+                        user,
+                        createConversationHandler,
+                        acceptConversationHandler,
+                        deleteConversationHandler,
+                        searchUserHandler,
+                    }) => {
     const { data } = useSession()
     let ids = data?.user?.user_id
     return (
@@ -59,7 +65,12 @@ const SearchUser = ({ user }) => {
                     {/*ok*/}
                     {(user?.requester === data?.user?.user_id && user?.is_pending) &&
                         <Box sx={{ width: '100%', display: 'flex', gap: '12px' }}>
-                            <Button variant="contained" color="error" size="small"
+                            <Button onClick={async () => {
+                                await deleteConversationHandler(user?.conversation_id)
+                                await searchUserHandler()
+                            }} variant="contained"
+                                    color="error"
+                                    size="small"
                                     sx={{ textTransform: 'capitalize' }}>
                                 Cancel
                             </Button>
@@ -73,17 +84,29 @@ const SearchUser = ({ user }) => {
                     }
 
                     {(!user?.is_friend && !user?.requester) &&
-                        <Button variant="contained" color="info" size="small" sx={{ textTransform: 'capitalize' }}>
+                        <Button onClick={async () => {
+                            await createConversationHandler(user?.id)
+                            await searchUserHandler()
+                        }} variant="contained" color="info"
+                                size="small" sx={{ textTransform: 'capitalize' }}>
                             Add Friend
                         </Button>
                     }
                     {((user?.requester && user?.requester !== data?.user?.user_id) && user?.is_pending) &&
-                        <Box sx={{ width: '100%', display: 'flex', gap: '12px' }}>
+                        <Box onClick={async () => {
+                            await deleteConversationHandler(user?.conversation_id)
+                            await searchUserHandler()
+                        }}
+                             sx={{ width: '100%', display: 'flex', gap: '12px' }}>
                             <Button variant="contained" color="error" size="small"
                                     sx={{ textTransform: 'capitalize' }}>
                                 Reject
                             </Button>
-                            <Button variant="contained" color="success" size="small"
+                            <Button onClick={async () => {
+                                await searchUserHandler()
+                                await acceptConversationHandler(user?.conversation_id, user?.requester)
+                            }}
+                                    variant="contained" color="success" size="small"
                                     sx={{ textTransform: 'capitalize' }}>
                                 Accept
                             </Button>

@@ -15,16 +15,22 @@ import ClearIcon from '@mui/icons-material/Clear'
 
 
 const LeftSide = (props) => {
-    const { conversations, activeConversation, conversationHandler } = props
+    const {
+        conversations,
+        activeConversation,
+        oneConversationGetHandler,
+        createConversationHandler,
+        acceptConversationHandler,
+        deleteConversationHandler,
+    } = props
     const { data } = useSession()
 
     const [filterUser, setFilterUser] = useState('')
     const [searchText, setSearchText] = useState('')
 
-    const searchUserHandler = (data) => {
-        setSearchText(data)
+    const searchUserHandler = () => {
         httpClient
-            .get(`/users/?search=${data}`)
+            .get(`/users/?search=${searchText}`)
             .then((response) => {
                 setFilterUser(response.data)
             })
@@ -65,7 +71,10 @@ const LeftSide = (props) => {
                 <Box sx={{ position: 'relative' }}>
                     <TextField
                         value={searchText}
-                        onChange={e => searchUserHandler(e.target.value)}
+                        onChange={e => {
+                            setSearchText(e.target.value)
+                            searchUserHandler()
+                        }}
                         fullWidth
                         placeholder="Find people here.."
                         size="small"
@@ -114,7 +123,12 @@ const LeftSide = (props) => {
                         }}>
                             {
                                 filterUser.map((user, index) =>
-                                    <SearchUser key={index} user={user} />,
+                                    <SearchUser key={index} user={user}
+                                                createConversationHandler={createConversationHandler}
+                                                acceptConversationHandler={acceptConversationHandler}
+                                                deleteConversationHandler={deleteConversationHandler}
+                                                searchUserHandler={searchUserHandler}
+                                    />,
                                 )
                             }
                         </Box>
@@ -141,7 +155,9 @@ const LeftSide = (props) => {
                         key={index}
                         conversation={conversation}
                         user={data?.user.user_id === conversation?.user1?.id ? conversation.user2 : conversation.user1}
-                        conversationHandler={conversationHandler}
+                        oneConversationGetHandler={oneConversationGetHandler}
+                        acceptConversationHandler={acceptConversationHandler}
+                        deleteConversationHandler={deleteConversationHandler}
                         active={
                             conversation.id === activeConversation
                         }

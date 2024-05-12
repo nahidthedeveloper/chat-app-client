@@ -2,12 +2,11 @@ import React, { useState } from 'react'
 import Box from '@mui/material/Box'
 import SelectedUser from '@/components/SelectedUser'
 import DeleteMessage from '@/components/message/DeleteMessage'
-import { Button, Divider } from '@mui/material'
+import { Button, Divider, Typography } from '@mui/material'
 import Sender from '@/components/message/Sender'
 import Receiver from '@/components/message/Receiver'
 import TextField from '@mui/material/TextField'
 import SendIcon from '@mui/icons-material/Send'
-import { useForm } from 'react-hook-form'
 import { useSession } from 'next-auth/react'
 
 const RightSide = (props) => {
@@ -17,10 +16,10 @@ const RightSide = (props) => {
 
     const handleKeyPress = (event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault();
-            handleSubmit(messageSubmit)();
+            event.preventDefault()
+            handleSubmit(messageSubmit)()
         }
-    };
+    }
 
 
     return (
@@ -66,6 +65,7 @@ const RightSide = (props) => {
                     },
                 }}
             >
+                {messages.length === 0 && <Typography sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}>Inbox Empty</Typography>}
                 {messages?.map((message, index) =>
                     message.sender === data?.user.user_id ? (
                         <Sender key={index} messages={message} />

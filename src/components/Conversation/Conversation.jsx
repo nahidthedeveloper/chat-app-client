@@ -4,12 +4,18 @@ import Box from '@mui/material/Box'
 import { Button, Typography } from '@mui/material'
 import { useSession } from 'next-auth/react'
 
-const Conversation = ({ conversation, conversationHandler, active, user }) => {
+const Conversation = ({
+                          conversation,
+                          oneConversationGetHandler,
+                          active,
+                          user,
+                          acceptConversationHandler,
+                          deleteConversationHandler,
+                      }) => {
     const { data } = useSession()
     const { id, requester, is_friend, is_pending } = conversation
-    return (
-        <Box
-            onClick={() => conversationHandler(id)}
+    return (<Box
+            onClick={() => oneConversationGetHandler(id)}
             sx={{
                 display: 'flex',
                 alignItems: 'center',
@@ -19,8 +25,7 @@ const Conversation = ({ conversation, conversationHandler, active, user }) => {
                 borderBottom: '1px solid',
                 borderColor: 'conversation.border',
                 '&:hover': {
-                    backgroundColor: 'conversation.hover',
-                    transition: 'all 0.3s ease-in-out',
+                    backgroundColor: 'conversation.hover', transition: 'all 0.3s ease-in-out',
                 },
             }}
             bgcolor={active && 'conversation.hover'}
@@ -50,40 +55,38 @@ const Conversation = ({ conversation, conversationHandler, active, user }) => {
                 >
                     last sms here
                 </Typography>
-                {
-                    !is_friend &&
-                    <Box sx={{ mt: '6px', width: '100%' }}>
-                        {(requester === data?.user?.user_id && is_pending) &&
-                            <Box sx={{ width: '100%', display: 'flex', gap: '12px' }}>
-                                <Button variant="contained" color="error" size="small"
-                                        sx={{ textTransform: 'capitalize' }}>
-                                    Cancel
-                                </Button>
-                                <Button variant="contained" color="success" size="small"
-                                        sx={{ textTransform: 'capitalize' }}
-                                        disabled
-                                >
-                                    Requested
-                                </Button>
-                            </Box>
-                        }
-                        {(requester !== data?.user?.user_id && is_pending) &&
-                            <Box sx={{ width: '100%', display: 'flex', gap: '12px' }}>
-                                <Button variant="contained" color="error" size="small"
-                                        sx={{ textTransform: 'capitalize' }}>
-                                    Reject
-                                </Button>
-                                <Button variant="contained" color="success" size="small"
-                                        sx={{ textTransform: 'capitalize' }}>
-                                    Accept
-                                </Button>
-                            </Box>
-                        }
-                    </Box>
-                }
+                {!is_friend && <Box sx={{ mt: '6px', width: '100%' }}>
+                    {(requester === data?.user?.user_id && is_pending) &&
+                        <Box sx={{ width: '100%', display: 'flex', gap: '12px' }}>
+                            <Button onClick={() => deleteConversationHandler(id)} variant="contained" color="error"
+                                    size="small"
+                                    sx={{ textTransform: 'capitalize' }}>
+                                Cancel
+                            </Button>
+                            <Button variant="contained" color="success" size="small"
+                                    sx={{ textTransform: 'capitalize' }}
+                                    disabled
+                            >
+                                Requested
+                            </Button>
+                        </Box>}
+                    {(requester !== data?.user?.user_id && is_pending) &&
+                        <Box sx={{ width: '100%', display: 'flex', gap: '12px' }}>
+                            <Button onClick={() => deleteConversationHandler(id)} variant="contained" color="error"
+                                    size="small"
+                                    sx={{ textTransform: 'capitalize' }}>
+                                Reject
+                            </Button>
+                            <Button
+                                onClick={() => acceptConversationHandler(id, requester)}
+                                variant="contained" color="success" size="small"
+                                sx={{ textTransform: 'capitalize' }}>
+                                Accept
+                            </Button>
+                        </Box>}
+                </Box>}
             </Box>
-        </Box>
-    )
+        </Box>)
 }
 
 export default Conversation

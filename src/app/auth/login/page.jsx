@@ -52,7 +52,7 @@ export default function SignIn() {
                 }
             } else {
                 toast.success('Login Successful')
-                router.push(callbackUrl ? callbackUrl : '/conversation')
+                router.push(callbackUrl ? callbackUrl : '/')
             }
         })
     }
@@ -128,7 +128,7 @@ export default function SignIn() {
                         <Grid item>
                             <Link href={'/auth/signup/'}>
                                 <Typography variant="body2">
-                                    {"Don't have an account? Sign Up"}
+                                    {'Don\'t have an account? Sign Up'}
                                 </Typography>
                             </Link>
                         </Grid>

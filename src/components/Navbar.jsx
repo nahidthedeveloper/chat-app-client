@@ -8,7 +8,7 @@ import { signOut, useSession } from 'next-auth/react'
 const Navbar = ({ toggleThemeMode, darkMode }) => {
     const { data, status } = useSession()
     return (
-        <AppBar position="static" sx={{ py: '20px' }}>
+        <AppBar position="sticky" sx={{ py: '20px', top: 0 }}>
             <Box className="nav" display="flex" alignItems="center">
                 <Typography variant="h6" sx={{ flexGrow: 1 }}>
                     <Link href="/" style={{ textDecoration: 'none' }}>
@@ -17,13 +17,6 @@ const Navbar = ({ toggleThemeMode, darkMode }) => {
                 </Typography>
 
                 <Box sx={{ display: 'flex', gap: 2, mr: 2 }}>
-                    {status === 'authenticated' && (
-                        <Link href={'/conversation'}>
-                            <Button variant="text" color="inherit">
-                                Inbox
-                            </Button>
-                        </Link>
-                    )}
                     <Link href={'/about'}>
                         <Button variant="text" color="inherit">
                             About

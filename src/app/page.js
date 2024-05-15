@@ -1,9 +1,5 @@
-import { Stack, Typography } from '@mui/material'
+import ConversationMain from '@/components/ConversationMain'
 
 export default function Home() {
-    return (
-        <Stack>
-            <Typography variant="h3"> This is home page </Typography>
-        </Stack>
-    )
+    return <ConversationMain />
 }

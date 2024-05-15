@@ -22,6 +22,7 @@ const Message = () => {
     const [activeConversationData, setActiveConversationData] = useState([])
     const [changer, setChanger] = useState(false)
     const user = data?.user.user_id
+    const token = data?.user.accessToken
 
     const hookForm = {
         register,
@@ -36,26 +37,6 @@ const Message = () => {
             setActiveConversationData(activeUser[0])
         }
     }, [activeConversation, conversations])
-
-    useEffect(() => {
-        const fetchData = () => {
-            httpClient
-                .get(`/chat/conversation_list/`)
-                .then((response) => {
-                    setConversations(response.data)
-                })
-                .catch((err) => {
-                    console.log(err)
-                    toast.error(err.message)
-                })
-        }
-
-        fetchData()
-
-        const intervalId = setInterval(fetchData, 10000)
-        return () => clearInterval(intervalId)
-
-    }, [changer])
 
     useEffect(() => {
         if (tokenContext === 'added') {
@@ -75,9 +56,29 @@ const Message = () => {
     }, [tokenContext])
 
     useEffect(() => {
+        const fetchData = () => {
+            httpClient
+                .get(`/chat/conversation_list/`)
+                .then((response) => {
+                    setConversations(response.data)
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+        }
+
+        fetchData()
+
+        const intervalId = setInterval(fetchData, 10000)
+        return () => clearInterval(intervalId)
+
+    }, [changer])
+
+
+    useEffect(() => {
         let socket = null
         if (activeConversation) {
-            socket = new WebSocket(`ws://localhost:8000/ws/chat/${activeConversation}/`)
+            socket = token && new WebSocket(`ws://localhost:8000/ws/chat/${activeConversation}/?token=${token}`)
             socket.onopen = function(e) {
                 console.log('Connection Established')
             }

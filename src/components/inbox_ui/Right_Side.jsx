@@ -21,7 +21,6 @@ const RightSide = (props) => {
         }
     }
 
-
     return (
         <Box
             sx={{

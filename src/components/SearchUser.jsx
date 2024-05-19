@@ -75,7 +75,7 @@ const SearchUser = ({
                                 Cancel
                             </Button>
                             <Button variant="contained" color="success" size="small"
-                                    sx={{ textTransform: 'capitalize' }}
+                                    sx={{ textTransform: 'capitalize'}}
                                     disabled
                             >
                                 Requested

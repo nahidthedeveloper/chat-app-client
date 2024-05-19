@@ -30,6 +30,30 @@ const Message = () => {
         reset,
     }
 
+    const [filterUser, setFilterUser] = useState('')
+    const [searchText, setSearchText] = useState('')
+
+    const searchUserHandler = () => {
+        httpClient
+            .get(`/users/?search=${searchText}`)
+            .then((response) => {
+                setFilterUser(response.data)
+            })
+            .catch((err) => {
+                toast.error(err.message)
+            })
+    }
+
+    const fetchConversationList = () => {
+        httpClient
+            .get(`/chat/conversation_list/`)
+            .then((response) => {
+                setConversations(response.data)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    }
 
     useEffect(() => {
         if (conversations) {
@@ -37,6 +61,12 @@ const Message = () => {
             setActiveConversationData(activeUser[0])
         }
     }, [activeConversation, conversations])
+
+    useEffect(() => {
+        if (tokenContext === 'added') {
+            fetchConversationList()
+        }
+    }, [changer])
 
     useEffect(() => {
         if (tokenContext === 'added') {
@@ -56,24 +86,39 @@ const Message = () => {
     }, [tokenContext])
 
     useEffect(() => {
-        const fetchData = () => {
-            httpClient
-                .get(`/chat/conversation_list/`)
-                .then((response) => {
-                    setConversations(response.data)
-                })
-                .catch((err) => {
-                    console.log(err)
-                })
+        let ws = null
+
+        if (token) {
+            ws = new WebSocket(`ws://localhost:8000/ws/friend_request/?token=${token}`)
+
+            ws.onopen = function(e) {
+                console.log('Connection Established for Friend Request')
+            }
+
+            ws.onclose = function(e) {
+                console.log('Connection Lost for Friend Request')
+            }
+
+            ws.onerror = function(e) {
+                console.error('Error Occurred for Friend Request:', e)
+            }
+
+            ws.onmessage = function(e) {
+                let data = JSON.parse(e.data)
+                let resConversation = data.conversation
+                if (resConversation !== undefined) {
+                    fetchConversationList()
+                    searchUserHandler()
+                }
+            }
         }
 
-        fetchData()
-
-        const intervalId = setInterval(fetchData, 10000)
-        return () => clearInterval(intervalId)
-
-    }, [changer])
-
+        return () => {
+            if (ws) {
+                ws.close()
+            }
+        }
+    }, [token])
 
     useEffect(() => {
         let socket = null
@@ -99,9 +144,12 @@ const Message = () => {
 
         }
         return () => {
-            socket?.close()
+            if (socket) {
+                socket.close()
+            }
         }
     }, [activeConversation])
+
 
     const oneConversationGetHandler = (id) => {
         setActiveConversation(id)
@@ -161,7 +209,7 @@ const Message = () => {
         httpClient
             .post(`/chat/sent_message/${activeConversation}/`, { ...data })
             .then((response) => {
-                console.log(response.data.message)
+                console.log(response.data)
             })
             .catch((err) => {
                 toast.error(err.response?.data?.message)
@@ -181,17 +229,22 @@ const Message = () => {
             }}
         >
             <Grid container>
-                <Grid item md={3}>
+                <Grid item sm={4} md={3}>
                     <LeftSide conversations={conversations}
                               activeConversation={activeConversation}
                               oneConversationGetHandler={oneConversationGetHandler}
                               createConversationHandler={createConversationHandler}
                               acceptConversationHandler={acceptConversationHandler}
                               deleteConversationHandler={deleteConversationHandler}
+                              searchUserHandler={searchUserHandler}
+                              filterUser={filterUser}
+                              setFilterUser={setFilterUser}
+                              searchText={searchText}
+                              setSearchText={setSearchText}
                     />
                 </Grid>
 
-                <Grid item md={9}>
+                <Grid item xs={12} sm={8} md={9}>
                     <RightSide messages={messages}
                                activeConversationData={activeConversationData}
                                messageSubmit={messageSubmit}

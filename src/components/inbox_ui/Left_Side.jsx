@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Box, Button, Divider, Typography } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import ChatIcon from '@mui/icons-material/Chat'
@@ -8,8 +8,6 @@ import Conversation from '@/components/Conversation/Conversation'
 import User from '@/components/User'
 import SettingsIcon from '@mui/icons-material/Settings'
 import { useSession } from 'next-auth/react'
-import { httpClient } from '@/utils/api'
-import { toast } from 'react-toastify'
 import SearchUser from '@/components/SearchUser'
 import ClearIcon from '@mui/icons-material/Clear'
 
@@ -22,22 +20,31 @@ const LeftSide = (props) => {
         createConversationHandler,
         acceptConversationHandler,
         deleteConversationHandler,
+        searchUserHandler,
+        filterUser,
+        setFilterUser,
+        searchText,
+        setSearchText,
     } = props
     const { data } = useSession()
 
-    const [filterUser, setFilterUser] = useState('')
-    const [searchText, setSearchText] = useState('')
+    const [isOpen, setIsOpen] = useState(false)
+    let menuRef = useRef()
 
-    const searchUserHandler = () => {
-        httpClient
-            .get(`/users/?search=${searchText}`)
-            .then((response) => {
-                setFilterUser(response.data)
-            })
-            .catch((err) => {
-                toast.error(err.message)
-            })
+    let handleClickOutside = (e) => {
+        if (!menuRef.current.contains(e.target)) {
+            setIsOpen(false)
+        }
     }
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside)
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    })
+
 
     return (
         <Box sx={{ height: '100%' }}>
@@ -71,6 +78,7 @@ const LeftSide = (props) => {
                 <Box sx={{ position: 'relative' }}>
                     <TextField
                         value={searchText}
+                        onFocus={() => setIsOpen(true)}
                         onChange={e => {
                             setSearchText(e.target.value)
                             searchUserHandler()
@@ -101,38 +109,45 @@ const LeftSide = (props) => {
                     >
                         <ClearIcon />
                     </Button>
-                    {filterUser &&
-                        <Box sx={{
-                            zIndex: '100',
-                            position: 'absolute',
-                            bgcolor: 'chatBody.light',
-                            width: '100%',
-                            maxHeight: '400px',
-                            mt: '4px',
-                            overflow: 'auto',
-                            wordWrap: 'break-word',
-                            '&::-webkit-scrollbar': {
-                                width: '4px',
-                            },
-                            '&::-webkit-scrollbar-track': {
-                                background: '#424242',
-                            },
-                            '&::-webkit-scrollbar-thumb': {
-                                backgroundColor: '#808080',
-                            },
-                        }}>
-                            {
-                                filterUser.map((user, index) =>
-                                    <SearchUser key={index} user={user}
-                                                createConversationHandler={createConversationHandler}
-                                                acceptConversationHandler={acceptConversationHandler}
-                                                deleteConversationHandler={deleteConversationHandler}
-                                                searchUserHandler={searchUserHandler}
-                                    />,
-                                )
-                            }
-                        </Box>
-                    }
+                    <Box ref={menuRef} sx={{
+                        zIndex: '100',
+                        position: 'absolute',
+                        bgcolor: 'chatBody.light',
+                        width: '100%',
+                    }}>
+                        {(filterUser && isOpen) &&
+                            <Box sx={{
+                                zIndex: '100',
+                                position: 'absolute',
+                                bgcolor: 'chatBody.light',
+                                width: '100%',
+                                maxHeight: '400px',
+                                mt: '4px',
+                                overflow: 'auto',
+                                wordWrap: 'break-word',
+                                '&::-webkit-scrollbar': {
+                                    width: '4px',
+                                },
+                                '&::-webkit-scrollbar-track': {
+                                    background: '#424242',
+                                },
+                                '&::-webkit-scrollbar-thumb': {
+                                    backgroundColor: '#808080',
+                                },
+                            }}>
+                                {
+                                    filterUser.map((user, index) =>
+                                        <SearchUser key={index} user={user}
+                                                    createConversationHandler={createConversationHandler}
+                                                    acceptConversationHandler={acceptConversationHandler}
+                                                    deleteConversationHandler={deleteConversationHandler}
+                                                    searchUserHandler={searchUserHandler}
+                                        />,
+                                    )
+                                }
+                            </Box>
+                        }
+                    </Box>
                 </Box>
             </Box>
             <Box

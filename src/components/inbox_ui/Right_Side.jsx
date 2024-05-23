@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Box from '@mui/material/Box'
 import SelectedUser from '@/components/SelectedUser'
 import DeleteMessage from '@/components/message/DeleteMessage'
@@ -64,7 +64,9 @@ const RightSide = (props) => {
                     },
                 }}
             >
-                {messages.length === 0 && <Typography sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}>Inbox Empty</Typography>}
+                {messages.length === 0 && <Typography
+                    sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>Inbox
+                    Empty</Typography>}
                 {messages?.map((message, index) =>
                     message.sender === data?.user.user_id ? (
                         <Sender key={index} messages={message} />

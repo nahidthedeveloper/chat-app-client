@@ -10,6 +10,7 @@ import { useSession } from 'next-auth/react'
 import LeftSide from '@/components/inbox_ui/Left_Side'
 import RightSide from '@/components/inbox_ui/Right_Side'
 import { useForm } from 'react-hook-form'
+import { encrypt } from '@/utils/crypto-AES'
 
 
 const Message = () => {
@@ -205,16 +206,19 @@ const Message = () => {
         setChanger(!changer)
     }
 
-    const messageSubmit = (data) => {
-        httpClient
-            .post(`/chat/sent_message/${activeConversation}/`, { ...data })
-            .then((response) => {
-                console.log(response.data)
-            })
-            .catch((err) => {
-                toast.error(err.response?.data?.message)
-            })
-        reset()
+    const messageSubmit = async (data) => {
+        try {
+            let message = data.message
+            let encryptedMessage = await encrypt(message)
+            let payload = { message: encryptedMessage }
+
+            let response = await httpClient.post(`/chat/sent_message/${activeConversation}/`, payload)
+            console.log(response.data)
+        } catch (err) {
+            toast.error(err.response?.data?.message || 'An error occurred')
+        } finally {
+            reset()
+        }
     }
 
 

@@ -1,10 +1,29 @@
-import React from 'react'
+'use client'
+import React, { useState, useEffect } from 'react'
 import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import { formattedDateTime } from '@/utils/formattedDateTime'
+import { decrypt } from '@/utils/crypto-AES'
 
 const Receiver = ({ messages }) => {
     const { message, timestamp } = messages
+    const [decryptedMessage, setDecryptedMessage] = useState(null)
+
+    useEffect(() => {
+        const decryptMessage = async () => {
+            try {
+                setDecryptedMessage(await decrypt(message))
+            } catch (error) {
+                console.error('Error decrypting message:', error)
+            }
+        }
+        decryptMessage()
+
+        return () => {
+            setDecryptedMessage(null)
+        }
+    }, [message])
+
     return (
         <Box sx={{ maxWidth: '80%', py: '6px' }}>
             <Typography
@@ -20,7 +39,7 @@ const Receiver = ({ messages }) => {
                     maxWidth: '100%',
                 }}
             >
-                {message}
+                {decryptedMessage}
             </Typography>
             <Typography
                 sx={{
@@ -36,3 +55,4 @@ const Receiver = ({ messages }) => {
 }
 
 export default Receiver
+

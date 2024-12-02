@@ -9,19 +9,19 @@ const Hs256 = () => {
                 <Typography>
                     HS256, which stands for HMAC-SHA256, is a cryptographic algorithm used for generating HMACs
                     (Hash-based
-                    Message Authentication Codes) with the SHA-256 hash function. It's commonly used in various security
+                    Message Authentication Codes) with the SHA-256 hash function. It&apos;s commonly used in various security
                     protocols like JSON Web Tokens (JWTs) for ensuring the integrity and authenticity of transmitted
                     data.
                 </Typography>
                 <br />
                 <Typography>
-                    Here's a step-by-step explanation of how HS256 works :
+                    Here&apos;s a step-by-step explanation of how HS256 works:
                 </Typography>
             </Box>
             <List sx={{ listStyle: 'decimal', pl: 4 }}>
                 <ListItem sx={{ display: 'list-item' }}>
                     <ListItemText>
-                        Input: The algorithm takes two inputs :
+                        Input: The algorithm takes two inputs:
                     </ListItemText>
 
                     <List sx={{ listStyle: 'disc', pl: 4, lineHeight: 1 }}>
@@ -36,7 +36,7 @@ const Hs256 = () => {
                 </ListItem>
                 <ListItem sx={{ display: 'list-item' }}>
                     Key Expansion: If the secret key is shorter than the block size of the hash function (in the
-                    case of SHA-256, 64 bytes), it's typically hashed to produce a key of the correct length.
+                    case of SHA-256, 64 bytes), it&apos;s typically hashed to produce a key of the correct length.
                 </ListItem>
                 <ListItem sx={{ display: 'list-item' }}>
                     Padding: If necessary, the message is padded to a multiple of the block size of the hash
